@@ -1,5 +1,23 @@
 #include <QAbstractTableModel>
 
+class NoteEntry
+{
+	private:
+		uint16_t note;
+		uint8_t volume;
+		char effect;
+		uint8_t param;
+		static const char note_2_text[12][3];
+
+	public:
+		NoteEntry();
+		QString renderNote() const;
+		QString renderVol() const;
+		QString renderFX() const;
+		QString renderParam() const;
+};
+
+
 class TrackView: public QAbstractTableModel
 {
 	public:
@@ -15,17 +33,9 @@ class TrackView: public QAbstractTableModel
 		//setData
 		//flags
 	private:
-		typedef struct
-		{
-			char note[3];
-			uint8_t octave;
-			uint8_t volume;
-			char effect[2];
-			uint8_t param;
-		} NoteEntry;
 
 		// TODO: handle end of pattern
 		static const int length = 0x40;
 
-		NoteEntry notes[length];
+		NoteEntry notes[4][length];
 };

@@ -1,15 +1,78 @@
+#include <QString>
+#include <QTextStream>
+
 #include "TrackView.h"
+
+NoteEntry::NoteEntry()
+{
+	note = volume = param = 0;
+	effect = '-';
+}
+
+QString NoteEntry::renderNote() const
+{
+	QString text;
+	QTextStream ts(&text);
+
+	if (note == 0) ts << "---" ;
+	else
+	{
+		ts << note_2_text[(note-1)%12] // Note name (with #)
+	   	   << (note-1)/12 ; // octave
+	}
+	return text;
+}
+
+const char NoteEntry::note_2_text[12][3] =
+{
+	"C-",
+	"C#",
+	"D-",
+	"D#",
+	"E-",
+	"F-",
+	"F#",
+	"G-",
+	"G#",
+	"A-",
+	"A#",
+	"B-"
+};
+
+QString NoteEntry::renderVol() const
+{
+	QString text;
+	QTextStream ts(&text);
+	ts.setIntegerBase(16);
+	ts << volume; 
+	return text;
+}
+
+QString NoteEntry::renderFX() const
+{
+	QString text;
+	QTextStream ts(&text);
+   	ts	<< effect ; 
+	return text;
+}
+
+QString NoteEntry::renderParam() const
+{
+	QString text;
+	QTextStream ts(&text);
+	ts.setIntegerBase(16);
+	right(ts).setFieldWidth(2);
+ 	ts.setPadChar('0');
+	ts	<< param ;
+	return text;
+
+	return text;
+}
+
+//------------------------------------------------------------------------------
 
 TrackView::TrackView()
 {
-	for(int i = 0; i<length;i++)
-	{
-		strcpy(notes[i].note,"--");
-		notes[i].octave = 0;
-		notes[i].volume = 0;
-		strcpy(notes[i].effect,"-");
-		notes[i].param = 0;
-	}
 }
 
 int TrackView::rowCount(const QModelIndex & parent) const 
@@ -19,41 +82,55 @@ int TrackView::rowCount(const QModelIndex & parent) const
 
 int TrackView::columnCount(const QModelIndex & parent) const
 {
-	return 5;
+	return 16;
 }
 
 QVariant TrackView::data(const QModelIndex & index, int role) const
 {
 	if(role == Qt::DisplayRole)
 	{
-		switch(index.column())
+		switch(index.column()%4)
 		{
-			case 0: return QVariant(notes[index.row()].note);
-			case 1: return QVariant(notes[index.row()].octave);
-			case 2: return QVariant(notes[index.row()].volume);
-			case 3: return QVariant(notes[index.row()].effect);
-			case 4: return QVariant(notes[index.row()].param);
+			case 0: return QVariant(notes[index.column()/4][index.row()]
+				.renderNote());
+			case 1: return QVariant(notes[index.column()/4][index.row()]
+				.renderVol());
+			case 2: return QVariant(notes[index.column()/4][index.row()]
+				.renderFX());
+			case 3: return QVariant(notes[index.column()/4][index.row()]
+				.renderParam());
 		}
 	}
+
+	// Other roles : nothing for now
 	return QVariant();
 }
 
-QVariant TrackView::headerData ( int section, Qt::Orientation orientation, int role) const
+QVariant TrackView::headerData ( int section, Qt::Orientation orientation, 
+	int role) const
 {
 	if(role == Qt::DisplayRole)
 	{
 		if(orientation == Qt::Vertical)
-			// TODO display it in hex
-			return section;
+		{
+			QString text;
+			QTextStream ts(&text);
+			ts.setIntegerBase(16);
+			right(ts).setFieldWidth(2);
+ 			ts.setPadChar('0');
+			ts << section;
+			return text;
+		}
 		else
-			switch(section)
+			switch(section%4)
 			{
-				case 0: return QVariant("Note");
-				case 1: return QVariant("Oct");
-				case 2: return QVariant("Vol");
-				case 3: return QVariant("FX");
-				case 4: return QVariant("Param");
+				case 0: return QVariant("Nte");
+				case 1: return QVariant("V");
+				case 2: return QVariant("F");
+				case 3: return QVariant("Param");
 			}
 	}
+
+	// Other roles: use default value
 	return QAbstractTableModel::headerData(section,orientation,role);
 }

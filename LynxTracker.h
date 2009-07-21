@@ -13,5 +13,5 @@ class LynxTracker : public QMainWindow
 
 	private:
 		Ui::MainWindow ui;
-		QVector<TrackView*> Tracks;
+		TrackView tv;
 };

@@ -5,7 +5,7 @@
 
 NoteEntry::NoteEntry()
 {
-	note = volume = param = 0;
+	note = instrument = volume = param = 0;
 	effect = '-';
 }
 
@@ -56,6 +56,20 @@ QString NoteEntry::renderFX() const
 	return text;
 }
 
+QString NoteEntry::renderInst() const
+{
+	QString text;
+	QTextStream ts(&text);
+	ts.setIntegerBase(16);
+	right(ts).setFieldWidth(2);
+ 	ts.setPadChar('0');
+	ts	<< instrument ;
+	return text;
+
+	return text;
+}
+
+
 QString NoteEntry::renderParam() const
 {
 	QString text;
@@ -73,8 +87,20 @@ bool NoteEntry::setFX(QChar fx)
 {
 	if(fx.isLetterOrNumber() || fx == '-')
 	{
+		// TODO: check if param match, if not reset to 00
 		effect=fx.toUpper().toAscii();
 		return true;
 	}
 	return false;
+}
+
+void NoteEntry::setParam(uint8_t newparam)
+{
+	// TODO: check if it makes sense wrt FX
+	param = newparam;
+}
+
+void NoteEntry::setInst(uint8_t newinst)
+{
+	instrument=newinst;
 }

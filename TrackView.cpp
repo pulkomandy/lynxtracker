@@ -17,7 +17,7 @@ int TrackView::rowCount(const QModelIndex & parent) const
 
 int TrackView::columnCount(const QModelIndex & parent) const
 {
-	return 16;
+	return 20;
 }
 
 Qt::ItemFlags TrackView::flags(const QModelIndex &index) const
@@ -32,15 +32,17 @@ QVariant TrackView::data(const QModelIndex & index, int role) const
 {
 	if(role == Qt::DisplayRole)
 	{
-		switch(index.column()%4)
+		switch(index.column()%5)
 		{
-			case 0: return QVariant(notes[index.column()/4][index.row()]
+			case 0: return QVariant(notes[index.column()/5][index.row()]
 				.renderNote());
-			case 1: return QVariant(notes[index.column()/4][index.row()]
+			case 1: return QVariant(notes[index.column()/5][index.row()]
+				.renderInst());
+			case 2: return QVariant(notes[index.column()/5][index.row()]
 				.renderVol());
-			case 2: return QVariant(notes[index.column()/4][index.row()]
+			case 3: return QVariant(notes[index.column()/5][index.row()]
 				.renderFX());
-			case 3: return QVariant(notes[index.column()/4][index.row()]
+			case 4: return QVariant(notes[index.column()/5][index.row()]
 				.renderParam());
 		}
 	}
@@ -54,15 +56,25 @@ bool TrackView::setData (const QModelIndex & index, const QVariant & value,
 {
 	if(role== Qt::EditRole)
 	{	
-		switch(index.column()%4)
+		switch(index.column()%5)
 		{
-			case 2: 
-				if( notes[index.column()/4][index.row()]
+			case 1: //inst
+				notes[index.column()/5][index.row()].setInst(value.toString().toInt(NULL,16));
+
+				dataChanged(index,index);
+				return true;
+			case 3: //FX 
+				if( notes[index.column()/5][index.row()]
 					.setFX(value.toString().right(1)[0]))
 				{
 					dataChanged(index,index);
 					return true;
 				}
+			case 4: //params
+				notes[index.column()/5][index.row()].setParam(value.toString().toInt(NULL,16));
+
+				dataChanged(index,index);
+				return true;
 		}
 
 		return false;
@@ -87,12 +99,13 @@ QVariant TrackView::headerData ( int section, Qt::Orientation orientation,
 			return text;
 		}
 		else
-			switch(section%4)
+			switch(section%5)
 			{
 				case 0: return QVariant("Nte");
-				case 1: return QVariant("V");
-				case 2: return QVariant("F");
-				case 3: return QVariant("Param");
+				case 1: return QVariant("In");
+				case 2: return QVariant("V");
+				case 3: return QVariant("F");
+				case 4: return QVariant("Param");
 			}
 	}
 

@@ -8,6 +8,6 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += LynxTracker.h TrackView.h
+HEADERS += LynxTracker.h TrackView.h NoteEntry.h
 FORMS += LynxTracker.ui
-SOURCES += LynxTracker.cpp main.cpp TrackView.cpp
+SOURCES += LynxTracker.cpp main.cpp TrackView.cpp NoteEntry.cpp

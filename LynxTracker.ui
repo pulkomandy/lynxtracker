@@ -66,7 +66,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_3"/>
+        <widget class="QSpinBox" name="spinBox_3">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+         <property name="value">
+          <number>6</number>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_6">
@@ -109,6 +119,15 @@
            <font>
             <family>Monospace</family>
            </font>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ContiguousSelection</enum>
+          </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideNone</enum>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
           </property>
          </widget>
         </item>

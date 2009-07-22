@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <QString>
 #include <QTextStream>
 
@@ -69,6 +70,11 @@ QString NoteEntry::renderParam() const
 	return text;
 }
 
+void NoteEntry::setFX(char fx)
+{
+	effect=fx;
+}
+
 //------------------------------------------------------------------------------
 
 TrackView::TrackView()
@@ -83,6 +89,14 @@ int TrackView::rowCount(const QModelIndex & parent) const
 int TrackView::columnCount(const QModelIndex & parent) const
 {
 	return 16;
+}
+
+Qt::ItemFlags TrackView::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
+
+	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant TrackView::data(const QModelIndex & index, int role) const
@@ -104,6 +118,26 @@ QVariant TrackView::data(const QModelIndex & index, int role) const
 
 	// Other roles : nothing for now
 	return QVariant();
+}
+
+bool TrackView::setData (const QModelIndex & index, const QVariant & value,
+	int role)
+{
+	if(role== Qt::EditRole)
+	{	
+		QMessageBox msgBox;
+		msgBox.setText("The document has been modified.");
+		msgBox.exec();
+		switch(index.column()%4)
+		{
+			case 2: notes[index.column()/4][index.row()].setFX(value.toChar().toAscii());
+				dataChanged(index,index);
+				return true;
+			default: return false;
+		}
+	}
+	else
+		return false;
 }
 
 QVariant TrackView::headerData ( int section, Qt::Orientation orientation, 
